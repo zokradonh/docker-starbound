@@ -15,6 +15,7 @@ ENV LANG en_US.UTF-8
 ENV DEBIAN_FRONTEND noninteractive
 
 RUN <<EOT
+    # installing required apt packages
     echo steam steam/question select "I AGREE" | debconf-set-selections
     echo steam steam/license note '' | debconf-set-selections
     add-apt-repository multiverse
@@ -48,8 +49,10 @@ RUN <<EOT
     mkdir -p /home/steam/.steam
     runuser -u steam steamcmd +quit
     mkdir -p /starbound
+    chown steam:steam /starbound
     # Add initial require update flag
     touch /.update
+    chmod a+w /.update
 EOT
 
 EXPOSE 28015
