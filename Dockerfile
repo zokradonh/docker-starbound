@@ -1,3 +1,4 @@
+# syntax=docker/dockerfile:1.4
 FROM ubuntu:22.04
 
 LABEL \
@@ -8,9 +9,6 @@ LABEL \
     org.opencontainers.image.source="https://github.com/zokradonh/docker-starbound"
 
 ENV LC_ALL en_US.UTF-8 
-RUN locale-gen en_US.UTF-8  
-ENV LANGUAGE en_US:en  
-ENV LANG en_US.UTF-8  
 
 ENV DEBIAN_FRONTEND noninteractive
 
@@ -25,17 +23,20 @@ RUN <<EOT
     apt-get install -y --no-install-recommends \
         ca-certificates \
         software-properties-common \
-        python-software-properties \
-        lib32gcc1-s1 \
+        lib32gcc-s1 \
         libstdc++6 \
         curl \
         wget \
-        bsdtar \
+        locales \
         build-essential \
         steamcmd
     rm -rf /var/lib/apt/lists/*
     ln -sf /usr/games/steamcmd /usr/bin/steamcmd
+    locale-gen en_US.UTF-8
 EOT
+
+ENV LANGUAGE en_US:en  
+ENV LANG en_US.UTF-8  
 
 # creating /home/steam/.steam to avoid two error messages on steamcmd start
 ENV UID=1000 \
