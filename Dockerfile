@@ -8,7 +8,9 @@ LABEL \
     org.opencontainers.image.url="https://github.com/zokradonh/docker-starbound" \
     org.opencontainers.image.source="https://github.com/zokradonh/docker-starbound"
 
-ENV LC_ALL en_US.UTF-8 
+ENV LC_ALL en_US.UTF-8
+ENV LANGUAGE en_US:en
+ENV LANG en_US.UTF-8
 
 ENV DEBIAN_FRONTEND noninteractive
 
@@ -34,9 +36,6 @@ RUN <<EOT
     ln -sf /usr/games/steamcmd /usr/bin/steamcmd
     locale-gen en_US.UTF-8
 EOT
-
-ENV LANGUAGE en_US:en  
-ENV LANG en_US.UTF-8  
 
 # creating /home/steam/.steam to avoid two error messages on steamcmd start
 ENV UID=1000 \
