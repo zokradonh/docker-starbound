@@ -18,20 +18,25 @@ ENV DEBIAN_FRONTEND noninteractive
 SHELL ["/bin/sh", "-e", "-c"]
 
 RUN <<EOT
+    # installing base apt packages
+    apt-get update
+    apt-get install -y --no-install-recommends software-properties-common curl wget ca-certificates
+EOT
+
+RUN <<EOT
     # installing required apt packages
     echo steam steam/question select "I AGREE" | debconf-set-selections
     echo steam steam/license note '' | debconf-set-selections
-    #add-apt-repository multiverse
+    add-apt-repository multiverse
     dpkg --add-architecture i386
     apt-get update
     apt-get upgrade -y
     apt-get autoremove -y
     apt-get install -y --no-install-recommends \
-        ca-certificates \
+        software-properties-common \
         lib32gcc-s1 \
         libstdc++6 \
-        curl \
-        wget \
+        libvorbisfile3 \
         locales \
         tini \
         build-essential \
@@ -48,13 +53,11 @@ RUN <<EOT
     # configure steamcmd
     addgroup --gid $GID steam
     adduser --system --uid $UID --gid $GID --shell /bin/bash steam
-    mkdir -p /home/steam/.steam
+    mkdir -p /home/steam/.steam /starbound /scripts
     runuser -u steam steamcmd +quit
-    mkdir -p /starbound
-    chown steam:steam /starbound
     # Add initial require update flag
-    touch /.update
-    chmod a+w /.update
+    touch /scripts/.update
+    chown steam:steam /scripts/.update /starbound /scripts
 EOT
 
 EXPOSE 28015
@@ -62,8 +65,7 @@ EXPOSE 28016
 
 WORKDIR /
 
-COPY --chmod=777 start.sh /start.sh
-COPY --chmod=777 update.sh /update.sh
+COPY --chmod=777 start.sh update.sh /scripts
 
 VOLUME ["/starbound"]
 
@@ -75,4 +77,4 @@ ENV DEBIAN_FRONTEND newt
 
 ENTRYPOINT ["/usr/bin/tini","-g","--"]
 
-CMD ["./start.sh"]
+CMD ["/scripts/start.sh"]

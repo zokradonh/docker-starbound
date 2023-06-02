@@ -5,7 +5,7 @@ if [ -f /starbound/linux/starbound_server ]; then
   ./starbound_server
 fi
 
-while [ -f /.update ]; do
+while [ -f /scripts/.update ]; do
 	sleep 10
 done
 

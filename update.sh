@@ -6,7 +6,7 @@ if [ -z "$1" ]; then
 	exit
 fi
 
-touch /.update
+touch /scripts/.update
 
 
 # Hack to remove cached auth details that stops the password prompt from appearing
@@ -21,10 +21,10 @@ if [ -n "$PID" ]; then
 fi
 
 /usr/games/steamcmd \
-	+force_install_dir /starbound/ \
+	+force_install_dir /starbound \
 	+login "$1" \
 	+app_update 211820 validate \
 	+quit \
-	&& rm /.update
+	&& rm /scripts/.update
 exit
 
