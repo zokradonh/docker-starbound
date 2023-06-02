@@ -14,18 +14,20 @@ ENV LANG en_US.UTF-8
 
 ENV DEBIAN_FRONTEND noninteractive
 
+# configure shell to fail build if one command fails
+SHELL ["/bin/sh", "-e", "-c"]
+
 RUN <<EOT
     # installing required apt packages
     echo steam steam/question select "I AGREE" | debconf-set-selections
     echo steam steam/license note '' | debconf-set-selections
-    add-apt-repository multiverse
+    #add-apt-repository multiverse
     dpkg --add-architecture i386
     apt-get update
     apt-get upgrade -y
     apt-get autoremove -y
     apt-get install -y --no-install-recommends \
         ca-certificates \
-        software-properties-common \
         lib32gcc-s1 \
         libstdc++6 \
         curl \
