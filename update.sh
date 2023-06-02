@@ -20,7 +20,7 @@ if [ -n "$PID" ]; then
 	kill "$PID"
 fi
 
-/steamcmd/steamcmd.sh \
+/usr/games/steamcmd \
 	+login "$1" \
 	+force_install_dir /starbound/ \
 	+app_update 211820 validate \

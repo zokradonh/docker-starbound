@@ -15,6 +15,10 @@ ENV LANG en_US.UTF-8
 ENV DEBIAN_FRONTEND noninteractive
 
 RUN <<EOT
+    echo steam steam/question select "I AGREE" | debconf-set-selections
+    echo steam steam/license note '' | debconf-set-selections
+    add-apt-repository multiverse
+    dpkg --add-architecture i386
     apt-get update
     apt-get upgrade -y
     apt-get autoremove -y
@@ -22,26 +26,29 @@ RUN <<EOT
         ca-certificates \
         software-properties-common \
         python-software-properties \
-        lib32gcc1 \
+        lib32gcc1-s1 \
         libstdc++6 \
         curl \
         wget \
         bsdtar \
-        build-essential
+        build-essential \
+        steamcmd
     rm -rf /var/lib/apt/lists/*
+    ln -sf /usr/games/steamcmd /usr/bin/steamcmd
 EOT
 
-USER root
-
-RUN mkdir -p /steamcmd
-RUN mkdir -p /starbound
-
-RUN <<EOT
-    cd /steamcmd
-	wget -o /tmp/steamcmd.tar.gz http://media.steampowered.com/installer/steamcmd_linux.tar.gz
-	tar zxvf steamcmd_linux.tar.gz
-	rm steamcmd_linux.tar.gz
-    chmod +x ./steamcmd.sh
+# creating /home/steam/.steam to avoid two error messages on steamcmd start
+ENV UID=1000 \
+    GID=1000
+RUN <<EOT 
+    # configure steamcmd
+    addgroup --gid $GID steam
+    adduser --system --uid $UID --gid $GID --shell /bin/bash steam
+    mkdir -p /home/steam/.steam
+    runuser -u steam steamcmd +quit
+    mkdir -p /starbound
+    # Add initial require update flag
+    touch /.update
 EOT
 
 EXPOSE 28015
@@ -49,11 +56,8 @@ EXPOSE 28016
 
 WORKDIR /
 
-ADD start.sh /start.sh
-ADD update.sh /update.sh
-
-# Add initial require update flag
-ADD .update /.update
+COPY --chmod=777 start.sh /start.sh
+COPY --chmod=777 update.sh /update.sh
 
 VOLUME ["/starbound"]
 
