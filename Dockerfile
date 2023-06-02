@@ -30,6 +30,7 @@ RUN <<EOT
         curl \
         wget \
         locales \
+        tini \
         build-essential \
         steamcmd
     rm -rf /var/lib/apt/lists/*
@@ -61,8 +62,12 @@ COPY --chmod=777 update.sh /update.sh
 
 VOLUME ["/starbound"]
 
+USER steam
+
 ENV STEAM_LOGIN FALSE
 
 ENV DEBIAN_FRONTEND newt
 
-ENTRYPOINT ["./start.sh"]
+ENTRYPOINT ["/usr/bin/tini","-g","--"]
+
+CMD ["./start.sh"]

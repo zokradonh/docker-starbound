@@ -21,8 +21,8 @@ if [ -n "$PID" ]; then
 fi
 
 /usr/games/steamcmd \
-	+login "$1" \
 	+force_install_dir /starbound/ \
+	+login "$1" \
 	+app_update 211820 validate \
 	+quit \
 	&& rm /.update
